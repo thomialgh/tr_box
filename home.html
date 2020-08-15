@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script>
+            var socket;
+            function Connect(){
+                var username = document.getElementById("uname").value;
+                var chatbox = document.getElementById("cbox").value;
+                
+
+
+                var url = "ws://localhost:19123/ws?name="+username+"&chatbox="+chatbox
+                socket = new WebSocket(url)
+                socket.onopen = function(e) {
+                    var div = document.createElement("div");
+                    div.appendChild(document.createElement("p").appendChild(document.createTextNode("you're connected")))
+                    document.getElementById("chatbox").appendChild(div);
+                        };
+                socket.onmessage = function(event) {
+                    var data = JSON.parse(event.data);
+                    data = JSON.parse(data);
+                    var div = document.createElement("div");
+                    div.appendChild(document.createElement("p").appendChild(document.createTextNode(data.username)))
+                    div.appendChild(document.createElement("hr"))
+                    div.appendChild(document.createElement("p").appendChild(document.createTextNode(data.message)))
+                    div.appendChild(document.createElement("hr"))
+
+
+                    document.getElementById("chatbox").appendChild(div);
+                    };  
+   
+            }
+
+            function Send() {
+                var message = document.getElementById("message").value;
+                document.getElementById("message").value = ""; 
+                socket.send(message);
+            }
+
+            function Close() {
+                socket.close()
+            }
+            
+
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <label for="fname">Username</label><br>
+            <input type="text" id="uname" name="username"><br>
+            <label for="lname">ChatBox</label><br>
+            <input type="text" id="cbox" name="cbox"><br><br>
+          <button onclick="Connect()">Connect</button> 
+        </div>    
+
+        <div class="container">
+            <hr>
+            <hr>
+            <hr>
+            <input type="text" id="message" name="message">
+            <button onclick="Send()">Chat</button> 
+            <button onclick="Close()">Close</button> 
+            <div id = "chatbox" style="border: 1;"></div>
+            <br>
+            
+        </div>
+    </body>
+</html>
